@@ -1,0 +1,41 @@
+{
+  "_comment_": [
+    "=============================================================",
+    "create_index_raw.json — Création de l'index movies_raw",
+    "Feature : F2 - Ingestion brute",
+    "Responsable : Sandrine",
+    "Description : Cet index reçoit les données BRUTES du CSV,",
+    "              sans transformation ni typage explicite.",
+    "              Elasticsearch devine les types automatiquement",
+    "              (dynamic mapping). C'est voulu : on veut voir",
+    "              les données telles qu'elles arrivent pour",
+    "              mesurer l'impact du nettoyage après.",
+    "=============================================================",
+    "COMMENT UTILISER CE FICHIER :",
+    "Une fois Elasticsearch démarré, exécutez cette commande :",
+    "curl -X PUT http://localhost:9200/movies_raw -H 'Content-Type: application/json' -d @create_index_raw.json",
+    "Ou via Kibana Dev Tools :",
+    "PUT /movies_raw",
+    "{ ...contenu de ce fichier sans le champ _comment_ ... }"
+  ],
+
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+
+    "_comment_settings": [
+      "number_of_shards: 1 → on tourne en local, 1 shard suffit",
+      "number_of_replicas: 0 → pas de réplication en local"
+    ]
+  },
+
+  "mappings": {
+    "dynamic": true,
+
+    "_comment_mappings": [
+      "dynamic: true → Elasticsearch devine automatiquement les types",
+      "C'est intentionnel pour movies_raw : on veut les données brutes",
+      "Le typage explicite sera fait dans movies_clean (Feature F4)"
+    ]
+  }
+}
