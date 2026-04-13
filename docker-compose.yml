@@ -1,0 +1,139 @@
+# =============================================================
+# docker-compose.yml — Stack ELK Movies Platform
+# Équipe : Sandrine (lead), Audrey, Destiné, Alexandre
+# Feature : F1 - Bootstrap stack
+# =============================================================
+# Ce fichier démarre 3 services en même temps :
+#   - Elasticsearch : moteur de recherche et stockage des données
+#   - Kibana        : interface de visualisation
+#   - Logstash      : pipeline d'ingestion et nettoyage des données
+# =============================================================
+
+version: "3.8"
+
+# -----------------------------------------------------------
+# SERVICES
+# Chaque service = un conteneur Docker indépendant
+# -----------------------------------------------------------
+services:
+
+  # =========================================================
+  # SERVICE 1 : ELASTICSEARCH
+  # Rôle : stocker et indexer les données films
+  # Port  : 9200 (API REST) et 9300 (communication interne)
+  # =========================================================
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.0
+    container_name: elasticsearch
+
+    environment:
+      # Mode single-node : on tourne en local, pas besoin d'un cluster
+      - discovery.type=single-node
+      # Désactive la sécurité (SSL/TLS) pour simplifier le dev en local
+      - xpack.security.enabled=false
+      # Limite la mémoire utilisée par Elasticsearch (important sur Windows)
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+
+    ports:
+      # Format : "PORT_LOCAL:PORT_CONTENEUR"
+      # On accède à Elasticsearch via http://localhost:9200
+      - "9200:9200"
+      - "9300:9300"
+
+    volumes:
+      # Stockage persistant des données Elasticsearch
+      # Sans ce volume, toutes les données sont perdues si le conteneur redémarre
+      - elasticsearch_data:/usr/share/elasticsearch/data
+
+    networks:
+      - elk_network
+
+    # Healthcheck : vérifie que Elasticsearch est bien démarré
+    # Docker attend que ce test passe avant de démarrer Kibana et Logstash
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:9200/_cluster/health | grep -q '\"status\":\"green\"\\|\"status\":\"yellow\"'"]
+      interval: 20s   # vérifie toutes les 20 secondes
+      timeout: 10s    # attend 10 secondes max pour une réponse
+      retries: 10     # réessaie 10 fois avant de déclarer le service en échec
+
+  # =========================================================
+  # SERVICE 2 : KIBANA
+  # Rôle : interface web pour visualiser et explorer les données
+  # Port  : 5601
+  # =========================================================
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.0
+    container_name: kibana
+
+    environment:
+      # Adresse d'Elasticsearch vue par Kibana (nom du service Docker)
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+
+    ports:
+      # On accède à Kibana via http://localhost:5601
+      - "5601:5601"
+
+    networks:
+      - elk_network
+
+    # Kibana ne démarre qu'après qu'Elasticsearch soit healthy
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://localhost:5601/api/status | grep -q 'available'"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+
+  # =========================================================
+  # SERVICE 3 : LOGSTASH
+  # Rôle : lire movies.csv, nettoyer les données, envoyer vers Elasticsearch
+  # =========================================================
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.13.0
+    container_name: logstash
+
+    environment:
+      # Limite la mémoire utilisée par Logstash
+      - "LS_JAVA_OPTS=-Xms256m -Xmx256m"
+
+    volumes:
+      # Pipeline Logstash monté en lecture seule (ro)
+      # Logstash lira ce fichier pour savoir quoi faire avec les données
+      - ./logstash/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+
+      # Dossier data monté en lecture seule (ro) — obligatoire selon le sujet
+      # C'est ici que se trouve movies.csv
+      - ./data:/data:ro
+
+      # Dossier des logs Logstash
+      - ./logs:/usr/share/logstash/logs
+
+    networks:
+      - elk_network
+
+    # Logstash ne démarre qu'après qu'Elasticsearch soit healthy
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
+# -----------------------------------------------------------
+# VOLUMES
+# Les volumes permettent de persister les données
+# même si les conteneurs sont arrêtés ou supprimés
+# -----------------------------------------------------------
+volumes:
+  elasticsearch_data:
+    driver: local
+
+# -----------------------------------------------------------
+# NETWORK
+# Un réseau interne permet aux 3 services de communiquer
+# entre eux par leur nom (ex: "elasticsearch", "kibana")
+# sans exposer leurs ports internes à l'extérieur
+# -----------------------------------------------------------
+networks:
+  elk_network:
+    driver: bridge
