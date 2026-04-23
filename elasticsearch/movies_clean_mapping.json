@@ -1,0 +1,77 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0,
+    "analysis": {
+      "analyzer": {
+        "french_english_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding",
+            "french_english_stop",
+            "french_english_stemmer"
+          ]
+        },
+        "search_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      },
+      "filter": {
+        "french_english_stop": {
+          "type": "stop",
+          "stopwords": ["_french_", "_english_"]
+        },
+        "french_english_stemmer": {
+          "type": "stemmer",
+          "language": "light_french"
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "id": { "type": "integer" },
+      "title": {
+        "type": "text",
+        "analyzer": "french_english_analyzer",
+        "search_analyzer": "search_analyzer",
+        "fields": { "keyword": { "type": "keyword" } }
+      },
+      "overview": {
+        "type": "text",
+        "analyzer": "french_english_analyzer",
+        "search_analyzer": "search_analyzer"
+      },
+      "tagline": {
+        "type": "text",
+        "analyzer": "french_english_analyzer"
+      },
+      "genres": { "type": "keyword" },
+      "original_language": { "type": "keyword" },
+      "status": { "type": "keyword" },
+      "release_date": {
+        "type": "date",
+        "format": "yyyy-MM-dd||strict_date_optional_time||epoch_millis"
+      },
+      "popularity": { "type": "float" },
+      "vote_average": { "type": "float" },
+      "vote_count": { "type": "integer" },
+      "budget": { "type": "long" },
+      "revenue": { "type": "long" },
+      "runtime": { "type": "integer" },
+      "credits": { "type": "keyword" },
+      "keywords": { "type": "keyword" },
+      "production_companies": { "type": "keyword" },
+      "recommendations": { "type": "keyword" },
+      "poster_path": { "type": "keyword", "index": false },
+      "backdrop_path": { "type": "keyword", "index": false }
+    }
+  }
+}
