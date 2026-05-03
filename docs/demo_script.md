@@ -20,7 +20,6 @@ Montrer que la plateforme ELK Movies est entièrement fonctionnelle :
 ## 2. Prérequis avant la démo
 
 - Docker Desktop démarré
-- Projet cloné sur le PC
 - movies.csv placé dans data/
 - Terminal PowerShell ouvert dans le dossier du projet
 
@@ -35,7 +34,7 @@ docker compose up -d
 docker compose ps
 ```
 
-**Ce qu'on doit voir :** Les 3 services (elasticsearch, kibana, logstash) démarrent
+**Ce qu'on montre :** Les 3 services (elasticsearch, kibana, logstash) démarrent
 correctement avec le statut Healthy/Running.
 
 ---
@@ -46,7 +45,7 @@ correctement avec le statut Healthy/Running.
 Invoke-RestMethod -Method GET -Uri "http://localhost:9200/movies_raw/_count"
 ```
 
-**Ce qu'on doit voir :** 662 083 films ingérés dans movies_raw.
+**Ce qu'on montre :** 662 083 films ingérés dans movies_raw.
 
 ---
 
@@ -62,7 +61,7 @@ Puis afficher le film Avatar nettoyé :
 Invoke-RestMethod -Method GET -Uri "http://localhost:9200/movies_clean/_doc/19995" | ConvertTo-Json -Depth 5
 ```
 
-**Ce qu'on doit voir :**
+**Ce qu'on montre :**
 - 662 077 films dans movies_clean
 - genres est un tableau ["Action", "Adventure", "Fantasy", "Science Fiction"]
 - budget est un entier 237000000 (pas une chaîne)
@@ -101,7 +100,7 @@ populaires récents avec une bonne note.
 
 ### Étape 5 — Montrer le dashboard Kibana (2 minutes)
 
-Ouvrir http://localhost:5601, importer le fichier json du dashbord pris sur github et naviguer vers le dashboard Movies Analytics.
+Ouvrir http://localhost:5601 et naviguer vers le dashboard Movies Analytics.
 
 **Ce qu'on montre :**
 - Répartition des films par genre

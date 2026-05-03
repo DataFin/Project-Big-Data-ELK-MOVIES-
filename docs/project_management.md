@@ -39,9 +39,9 @@
 | `feature/bootstrap-structure` | Audrey | PR ouverte |
 | `feature/ingestion-raw` | Sandrine | PR ouverte |
 | `feature/nettoyage-normalisation` | Sandrine + Destiné + Audrey | PR ouverte |
-| `feature/mapping-qualite` | Alexandre | PR Ouverte |
-| `feature/requetes-analytiques` | Destiné | PR Ouverte |
-| `feature/dashboard-kibana` | Audrey | A créer |
+| `feature/mapping-qualite` | Alexandre | A créer |
+| `feature/requetes-analytiques` | Sandrine | A créer |
+| `feature/dashboard-kibana` | Destiné | A créer |
 | `feature/documentation` | Audrey | A créer |
 | `feature/search-api` | Alexandre | A créer |
 
@@ -55,9 +55,9 @@
 | F2 - Ingestion brute | Sandrine | Pipeline Logstash → movies_raw (662 083 docs) |
 | F3 - Nettoyage | Destiné + Sandrine + Audrey | Pipeline nettoyage → movies_clean (662 077 docs) |
 | F4 - Mapping & qualité | Alexandre | Mapping explicite, analyzer, contrôle qualité |
-| F5 - Requêtes analytiques | Destiné | 12 requêtes DSL dont 5 bool |
-| F6 - Dashboard Kibana | Destiné + Sandrine + Audrey| 6-8 visualisations, 1 dashboard |
-| F7 - Documentation | Audrey + Sandrine| Runbook, dictionnaire, planning poker |
+| F5 - Requêtes analytiques | Sandrine | 12 requêtes DSL dont 5 bool |
+| F6 - Dashboard Kibana | Destiné | 6-8 visualisations, 1 dashboard |
+| F7 - Documentation | Audrey | Runbook, dictionnaire, planning poker |
 | F8 - Moteur de recherche | Alexandre | API Flask connectée à Elasticsearch |
 
 ---

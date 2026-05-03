@@ -23,7 +23,7 @@
 | Index | Description | Documents |
 |---|---|---|
 | `movies_raw` | Données brutes sans transformation | 662 083 |
-| `movies_clean` | Données après transformation(nettoyage et typage) | 662 077 |
+| `movies_clean` | Données nettoyées et typées | 662 077 |
 
 ---
 
@@ -42,7 +42,7 @@
 | Champ | Type ES | Type source | Description | Exemple |
 |---|---|---|---|---|
 | `title` | text + keyword | string | Titre du film. Indexé en full-text avec french_english_analyzer pour la recherche. Le sous-champ keyword permet le tri et les agrégations. | "Avatar" |
-| `original_language` | keyword | string | Code ISO 639-1 (norme de codage des langues reconnu de manière internationale, codage avec deux lettre) de la langue originale du film | "en", "fr", "ja" |
+| `original_language` | keyword | string | Code ISO 639-1 de la langue originale du film | "en", "fr", "ja" |
 | `status` | keyword | string | Statut de sortie du film | "Released", "Post Production", "In Production", "Planned" |
 | `overview` | text | string | Synopsis du film. Indexé en full-text avec french_english_analyzer. | "In the 22nd century..." |
 | `tagline` | text | string | Slogan du film. "N/A" si absent. | "Enter the world of Pandora." |
@@ -53,7 +53,7 @@
 
 | Champ | Type ES | Type source | Description | Exemple | Valeurs spéciales |
 |---|---|---|---|---|---|
-| `release_date` | date | string | Date de sortie au format ISO 8601 ( norme de codage des dates reconnu de manière internationale) | "2009-12-10T00:00:00.000Z" | null si absente |
+| `release_date` | date | string | Date de sortie au format ISO 8601 | "2009-12-10T00:00:00.000Z" | null si absente |
 
 ---
 
@@ -94,11 +94,11 @@ Ils ont été normalisés en tableaux par le pipeline Logstash.
 
 | Champ | Type ES | Description | Exemple |
 |---|---|---|---|
-| `genres` | keyword[] | Liste des genres du film | ["Action", "Adventure", "Fantasy","..."] |
-| `keywords` | keyword[] | Liste des mots-clés associés | ["space travel", "alien", "marine","..."] |
-| `credits` | keyword[] | Liste des acteurs principaux | ["Sam Worthington", "Zoe Saldana","..."] |
-| `production_companies` | keyword[] | Sociétés de production | ["Lightstorm Entertainment", "20th Century Fox","..."] |
-| `recommendations` | keyword[] | IDs des films recommandés | ["24428", "49026", "70160","..."] |
+| `genres` | keyword[] | Liste des genres du film | ["Action", "Adventure", "Fantasy"] |
+| `keywords` | keyword[] | Liste des mots-clés associés | ["space travel", "alien", "marine"] |
+| `credits` | keyword[] | Liste des acteurs principaux | ["Sam Worthington", "Zoe Saldana"] |
+| `production_companies` | keyword[] | Sociétés de production | ["Lightstorm Entertainment", "20th Century Fox"] |
+| `recommendations` | keyword[] | IDs des films recommandés | ["24428", "49026", "70160"] |
 
 ---
 
@@ -136,8 +136,8 @@ L'analyzer `french_english_analyzer` est appliqué aux champs `title`, `overview
 
 | Composant | Type | Rôle |
 |---|---|---|
-| `standard tokenizer` | tokenizer | Permet de découper le texte en mots |
-| `lowercase` | filter | Met tout le teste selectionné en minuscules |
+| `standard tokenizer` | tokenizer | Découpe le texte en mots |
+| `lowercase` | filter | Met tout en minuscules |
 | `asciifolding` | filter | Supprime les accents (café → cafe) |
 | `french_english_stop` | filter | Supprime les mots vides (le, la, the, a...) |
 | `french_english_stemmer` | filter | Réduit les mots à leur racine (films → film) |
