@@ -1,0 +1,39 @@
+# =============================================================
+# logstash.yml — Configuration générale de Logstash
+# Ce fichier configure le comportement global de Logstash
+# indépendamment du pipeline (logstash.conf)
+# =============================================================
+
+# -----------------------------------------------------------
+# CONFIGURATION HTTP
+# Permet de vérifier l'état de Logstash via une API REST
+# Utile pour les healthchecks Docker
+# -----------------------------------------------------------
+http.host: "0.0.0.0"
+http.port: 9600
+
+# -----------------------------------------------------------
+# CONFIGURATION DU PIPELINE
+# -----------------------------------------------------------
+
+# Nombre de workers qui traitent les événements en parallèle
+# 1 worker suffit pour un projet local
+pipeline.workers: 1
+
+# Nombre de documents envoyés à Elasticsearch en une seule requête
+# 125 est un bon compromis entre performance et mémoire
+pipeline.batch.size: 125
+
+# Temps d'attente (en ms) avant d'envoyer un batch incomplet
+pipeline.batch.delay: 50
+
+# -----------------------------------------------------------
+# CONFIGURATION DES LOGS
+# -----------------------------------------------------------
+
+# Niveau de log : info, debug, warn, error
+# "info" est suffisant pour voir ce qui se passe
+log.level: info
+
+# Emplacement des logs Logstash
+path.logs: /usr/share/logstash/logs
